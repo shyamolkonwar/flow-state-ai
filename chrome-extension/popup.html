@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>FlowFacilitator Helper</title>
+  <style>
+    body {
+      width: 300px;
+      padding: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      margin: 0;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .header img {
+      width: 32px;
+      height: 32px;
+      margin-right: 12px;
+    }
+    
+    .header h1 {
+      font-size: 18px;
+      margin: 0;
+      color: #1f2937;
+    }
+    
+    .status {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      text-align: center;
+      font-weight: 500;
+    }
+    
+    .status.active {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .status.inactive {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+    
+    .stats {
+      background: #f9fafb;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    
+    .stat-row:last-child {
+      margin-bottom: 0;
+    }
+    
+    .stat-label {
+      color: #6b7280;
+      font-size: 14px;
+    }
+    
+    .stat-value {
+      color: #1f2937;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    
+    .button-primary {
+      background: #667eea;
+      color: white;
+    }
+    
+    .button-primary:hover {
+      background: #5568d3;
+    }
+    
+    .button-secondary {
+      background: #f3f4f6;
+      color: #1f2937;
+    }
+    
+    .button-secondary:hover {
+      background: #e5e7eb;
+    }
+    
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 16px;
+    }
+    
+    .footer a {
+      color: #667eea;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="icons/icon48.png" alt="FlowFacilitator">
+    <h1>FlowFacilitator</h1>
+  </div>
+  
+  <div id="status" class="status inactive">
+    <span id="status-text">Not Blocking</span>
+  </div>
+  
+  <div class="stats">
+    <div class="stat-row">
+      <span class="stat-label">Sites blocked today:</span>
+      <span class="stat-value" id="blocks-today">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Blocked domains:</span>
+      <span class="stat-value" id="domain-count">0</span>
+    </div>
+  </div>
+  
+  <button id="open-dashboard" class="button button-primary">
+    Open Dashboard
+  </button>
+  
+  <button id="settings" class="button button-secondary">
+    Extension Settings
+  </button>
+  
+  <div class="footer">
+    <a href="https://github.com/yourusername/flow-state-ai" target="_blank">
+      Learn More
+    </a>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

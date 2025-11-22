@@ -1,0 +1,72 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Node
+node_modules/
+dist/
+build/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+*.local
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Docker
+docker-compose.override.yml
+
+# Supabase
+infra/supabase/.env
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Application Support
+Library/
+
+# Build artifacts
+*.dmg
+*.pkg
+*.app
+
+# Test coverage
+.coverage
+htmlcov/
+coverage/
+
+# Temporary files
+tmp/
+temp/
+*.tmp

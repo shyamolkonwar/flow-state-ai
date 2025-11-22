@@ -1,0 +1,15 @@
+•⁠  ⁠*B. The Blocking Mechanism (The Overlay):*
+    * *Method:* Do NOT kill processes. Use an *Overlay Intercept*.
+    * Behavior: When a distracted app (e.g., Steam, Instagram) is opened during Flow, immediately render a full-screen, top-most web overlay (or Tkinter window) over it.
+    * UI: Display a message: "You are in Flow. Break it?" with a 10-second countdown before the "Unlock" button becomes active.
+
+•⁠  ⁠*C. Micro-Interventions (The Soft Reset):*
+    * When cognitive fatigue is detected (erratic usage/slowdown), trigger a *Soft Reset*:
+    * Apply a visual *Blur Effect* to the screen (using a transparent overlay window).
+    * Fade out audio volume (Linear Cross-Fade) instead of stopping it abruptly.
+    * Do NOT change screen color temperature.
+
+•⁠  ⁠*D. Gamification (RPG System):*
+    * Track user stats: *Stamina* (duration), *Resilience* (resisting the overlay), and *Consistency* (daily streaks).
+    * *Progressive Overload:* If the user usually quits at 25 mins, the AI sets the next goal to 26m 15s.
+    * *Schedule:* Import a user timetable. If a session is missed, use "Fluid Goals" to recalculate the day's targets so the streak isn't lost immediately.

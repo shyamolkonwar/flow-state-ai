@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Site Blocked - FlowFacilitator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 500px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .message {
+            font-size: 20px;
+            margin-bottom: 12px;
+            opacity: 0.95;
+            line-height: 1.5;
+        }
+
+        .domain {
+            font-size: 18px;
+            margin-bottom: 32px;
+            opacity: 0.8;
+            font-family: 'Monaco', 'Courier New', monospace;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .button-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 24px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .stat-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-label {
+            opacity: 0.9;
+        }
+
+        .stat-value {
+            font-weight: 700;
+        }
+
+        .quote {
+            margin-top: 32px;
+            font-style: italic;
+            opacity: 0.8;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="icon">🎯</div>
+        <h1>Stay Focused</h1>
+        <p class="message">This site is blocked to help you maintain your flow state.</p>
+        <div class="domain" id="blocked-domain">Loading...</div>
+
+        <div class="buttons">
+            <button id="whitelist-btn">Whitelist This Site</button>
+            <button id="pause-btn" class="button-secondary">Pause (10 min)</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-row">
+                <span class="stat-label">Sites blocked today:</span>
+                <span class="stat-value" id="block-count">0</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">You're in flow mode:</span>
+                <span class="stat-value">Keep going! 💪</span>
+            </div>
+        </div>
+
+        <p class="quote">
+            "The best moments in our lives are not the passive, receptive, relaxing times...
+            The best moments usually occur if a person's body or mind is stretched to its limits
+            in a voluntary effort to accomplish something difficult and worthwhile."
+            <br>— Mihaly Csikszentmihalyi
+        </p>
+    </div>
+
+    <script src="blocked.js"></script>
+</body>
+
+</html>

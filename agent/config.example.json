@@ -1,0 +1,20 @@
+{
+  "supabase": {
+    "url": "http://localhost:54321",
+    "service_key": "your-service-key-here",
+    "max_retries": 3
+  },
+  "agent": {
+    "api_port": 8765,
+    "api_token": "local_dev_token_12345",
+    "log_level": "info"
+  },
+  "native_messaging": {
+    "host_name": "com.flowfacilitator.helper",
+    "manifest_path": "~/Library/Application Support/Google/Chrome/NativeMessagingHosts/"
+  },
+  "flow_detection": {
+    "enabled": true,
+    "check_interval_seconds": 1
+  }
+}

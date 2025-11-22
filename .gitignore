@@ -70,3 +70,5 @@ coverage/
 tmp/
 temp/
 *.tmp
+
+phase6-integration-summary.md

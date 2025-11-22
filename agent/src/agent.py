@@ -15,6 +15,8 @@ from .protection import ProtectionController
 from .overlay_manager import OverlayManager
 from .micro_interventions import MicroIntervention
 from .gamification import GamificationSystem
+from .native_messaging import NativeMessagingHost
+from .api_server import AgentAPIServer
 
 
 class FlowAgent:
@@ -58,6 +60,10 @@ class FlowAgent:
         self.micro_intervention = MicroIntervention()
         self.gamification = GamificationSystem()
         
+        # Communication
+        self.native_messaging = NativeMessagingHost(on_message=self._on_extension_message)
+        self.api_server = AgentAPIServer(self, config)
+        
         # Current session
         self.current_session_id: Optional[str] = None
         self.session_start_app: Optional[str] = None
@@ -81,6 +87,12 @@ class FlowAgent:
         
         # Start input collection
         self.input_collector.start()
+        
+        # Start native messaging
+        self.native_messaging.start()
+        
+        # Start API server
+        self.api_server.start()
         
         # Start monitoring loop
         self.running = True

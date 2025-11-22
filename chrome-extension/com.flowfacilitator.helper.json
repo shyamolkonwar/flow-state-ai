@@ -1,0 +1,9 @@
+{
+    "name": "com.flowfacilitator.helper",
+    "description": "FlowFacilitator Native Messaging Host",
+    "path": "/usr/local/bin/flowfacilitator-agent",
+    "type": "stdio",
+    "allowed_origins": [
+        "chrome-extension://EXTENSION_ID_HERE/"
+    ]
+}

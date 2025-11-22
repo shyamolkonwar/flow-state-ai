@@ -3,6 +3,41 @@
 let isBlocking = false;
 let blockedDomains = [];
 let blockingRuleIds = [];
+let nativePort = null;
+
+// Connect to native messaging host
+function connectNativeMessaging() {
+    try {
+        nativePort = chrome.runtime.connectNative('com.flowfacilitator.helper');
+
+        nativePort.onMessage.addListener((message) => {
+            console.log('Received from agent:', message);
+            handleAgentMessage(message);
+        });
+
+        nativePort.onDisconnect.addListener(() => {
+            console.log('Disconnected from agent');
+            nativePort = null;
+            // Try to reconnect after 5 seconds
+            setTimeout(connectNativeMessaging, 5000);
+        });
+
+        console.log('Connected to native messaging host');
+    } catch (error) {
+        console.error('Failed to connect to native messaging:', error);
+    }
+}
+
+// Handle messages from agent
+function handleAgentMessage(message) {
+    if (message.cmd === 'enable_blocking') {
+        enableBlocking(message.domains);
+    } else if (message.cmd === 'disable_blocking') {
+        disableBlocking();
+    } else if (message.cmd === 'update_blocklist') {
+        updateBlocklist(message.domains);
+    }
+}
 
 // Listen for messages from native host (agent)
 chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
@@ -151,6 +186,9 @@ chrome.runtime.onStartup.addListener(() => {
             enableBlocking(result.blockedDomains);
         }
     });
+
+    // Connect to native messaging
+    connectNativeMessaging();
 });
 
 // Initialize on install
@@ -165,6 +203,9 @@ chrome.runtime.onInstalled.addListener(() => {
         blocksToday: 0,
         lastReset: new Date().toDateString()
     });
+
+    // Connect to native messaging
+    connectNativeMessaging();
 });
 
 console.log('FlowFacilitator Helper background script loaded');

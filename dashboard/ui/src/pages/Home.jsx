@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/api'
+import { supabase, agentAPI } from '../lib/api'
 
 export default function Home() {
     const [stats, setStats] = useState({
@@ -8,11 +8,26 @@ export default function Home() {
         longestSession: 0,
         averageSession: 0
     })
+    const [agentStatus, setAgentStatus] = useState(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         loadTodayStats()
+        loadAgentStatus()
+
+        // Refresh agent status every 5 seconds
+        const interval = setInterval(loadAgentStatus, 5000)
+        return () => clearInterval(interval)
     }, [])
+
+    async function loadAgentStatus() {
+        try {
+            const status = await agentAPI.getStatus()
+            setAgentStatus(status)
+        } catch (error) {
+            console.error('Error loading agent status:', error)
+        }
+    }
 
     async function loadTodayStats() {
         try {
@@ -64,6 +79,35 @@ export default function Home() {
                 </p>
             </div>
 
+            {/* Agent Status Banner */}
+            {agentStatus && (
+                <div className="card" style={{
+                    marginBottom: '24px',
+                    background: agentStatus.flow_state === 'in_flow' ? '#d1fae5' : '#f3f4f6',
+                    borderLeft: `4px solid ${agentStatus.flow_state === 'in_flow' ? '#10b981' : '#9ca3af'}`
+                }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#6b7280', marginBottom: '4px' }}>
+                                Current Status
+                            </div>
+                            <div style={{ fontSize: '20px', fontWeight: '700', color: agentStatus.flow_state === 'in_flow' ? '#065f46' : '#4b5563' }}>
+                                {agentStatus.flow_state === 'in_flow' ? '🎯 In Flow' :
+                                    agentStatus.flow_state === 'working' ? '⚡ Working' : '💤 Idle'}
+                            </div>
+                        </div>
+                        {agentStatus.flow_state === 'in_flow' && (
+                            <div style={{ textAlign: 'right' }}>
+                                <div style={{ fontSize: '14px', color: '#6b7280' }}>Time in Flow</div>
+                                <div style={{ fontSize: '24px', fontWeight: '700', color: '#065f46' }}>
+                                    {Math.floor(agentStatus.time_in_state_seconds / 60)}m
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
             <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
@@ -100,14 +144,14 @@ export default function Home() {
                     Quick Actions
                 </h2>
                 <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                    <button className="button button-primary">
+                    <button className="button button-primary" onClick={() => window.location.href = '/sessions'}>
                         View All Sessions
                     </button>
-                    <button className="button button-secondary">
+                    <button className="button button-secondary" onClick={() => window.location.href = '/settings'}>
                         Adjust Settings
                     </button>
-                    <button className="button button-secondary">
-                        Export Data
+                    <button className="button button-secondary" onClick={() => window.location.href = '/gamification'}>
+                        View RPG Stats
                     </button>
                 </div>
             </div>

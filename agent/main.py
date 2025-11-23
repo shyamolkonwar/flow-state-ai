@@ -40,7 +40,14 @@ def main():
     parser.add_argument('--dev', action='store_true', help='Run in development mode')
     parser.add_argument('--debug', action='store_true', help='Enable debug logging')
     parser.add_argument('--config', type=str, help='Path to config file')
+    parser.add_argument('--ui', action='store_true', help='Launch with Mac UI')
     args = parser.parse_args()
+    
+    # If UI flag is set, launch the Mac UI
+    if args.ui:
+        from src.mac_ui import run_mac_ui
+        run_mac_ui(dev_mode=args.dev)
+        return
     
     # Load configuration
     config = load_config(args.config, dev_mode=args.dev)

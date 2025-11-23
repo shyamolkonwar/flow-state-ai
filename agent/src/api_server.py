@@ -39,13 +39,19 @@ class AgentAPIServer:
                 time_in_state = self.agent.flow_engine.get_time_in_state()
                 metrics = self.agent.metrics.get_all_metrics()
                 
+                # Check permissions for UI
+                from .ui.utils import check_permissions
+                permissions = check_permissions()
+                
                 return jsonify({
                     'status': 'ok',
+                    'agent_running': True,
                     'flow_state': state.value,
                     'time_in_state_seconds': time_in_state,
                     'current_session_id': self.agent.current_session_id,
                     'metrics': metrics,
-                    'protection_active': self.agent.protection.is_protection_active()
+                    'protection_active': self.agent.protection.is_protection_active(),
+                    'permissions': permissions
                 })
             except Exception as e:
                 self.logger.error(f"Error getting status: {e}")

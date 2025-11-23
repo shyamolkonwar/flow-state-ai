@@ -1,13 +1,15 @@
 Flask==3.0.0
 flask-cors==4.0.0
 supabase==2.3.0
-pynput==1.7.6
-AppKit==0.2.8
-pyobjc-framework-Cocoa==10.1
+pynput==1.7.7
+pyobjc==9.2
 rumps==0.4.0
 python-dotenv==1.0.0
 psutil==5.9.6
 requests==2.31.0
+PyQt6==6.6.1
+PyQt6-Qt6==6.6.1
+keyring>=24.3.0
 
 # Development dependencies
 pytest==7.4.3

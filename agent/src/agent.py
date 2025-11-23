@@ -189,11 +189,44 @@ class FlowAgent:
     def _on_flow_change(self, old_state: FlowState, new_state: FlowState, reason: str = None):
         """Handle flow state changes"""
         self.logger.info(f"Flow state changed: {old_state.value} -> {new_state.value}")
-        
+
         if new_state == FlowState.IN_FLOW:
             self._start_session()
         elif old_state == FlowState.IN_FLOW and new_state != FlowState.IN_FLOW:
             self._end_session(reason or "unknown")
+
+    def _on_flow_broken(self, app_name: str):
+        """Handle flow broken by overlay unlock"""
+        self.logger.info(f"Flow broken by opening: {app_name}")
+        self._end_session(f"opened_blocked_app_{app_name}")
+
+    def _on_extension_message(self, message: dict) -> Optional[dict]:
+        """Handle messages from Chrome extension"""
+        self.logger.debug(f"Extension message: {message}")
+
+        cmd = message.get('cmd')
+        if cmd == 'get_status':
+            return {
+                'status': 'ok',
+                'flow_state': self.flow_engine.get_state().value,
+                'current_session': self.current_session_id,
+                'metrics': self.metrics.get_all_metrics()
+            }
+        elif cmd == 'start_session':
+            if self.flow_engine.get_state() != FlowState.IN_FLOW:
+                # Force start a session
+                self._start_session()
+                return {'status': 'ok', 'message': 'Session started'}
+            else:
+                return {'status': 'error', 'message': 'Already in flow'}
+        elif cmd == 'end_session':
+            if self.current_session_id:
+                self._end_session('manual_end')
+                return {'status': 'ok', 'message': 'Session ended'}
+            else:
+                return {'status': 'error', 'message': 'No active session'}
+
+        return {'status': 'error', 'message': 'Unknown command'}
     
     def _start_session(self):
         """Start a new flow session"""

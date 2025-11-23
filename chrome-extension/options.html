@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>FlowFacilitator Settings</title>
+  <style>
+    :root {
+      --crystal-white: #FFFFFF;
+      --deep-night: #0B0710;
+      --black-nebula: #09060E;
+      --prism-cyan: #4DE5FF;
+      --hyper-teal: #2FE6C1;
+      --aurora-magenta: #FF6EC7;
+      --solar-gold: #FFC66B;
+      --green-flash: #7CFFCF;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Display', sans-serif;
+      background: var(--deep-night);
+      color: var(--crystal-white);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--prism-cyan), var(--hyper-teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+
+    .header p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 16px;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .setting-group {
+      margin-bottom: 24px;
+    }
+
+    .setting-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .setting-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--prism-cyan);
+      margin-bottom: 12px;
+    }
+
+    .setting-description {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.2);
+      transition: 0.3s;
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: var(--crystal-white);
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background: linear-gradient(135deg, var(--prism-cyan), var(--hyper-teal));
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .setting-item:last-child {
+      border-bottom: none;
+    }
+
+    .setting-label {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .button-primary {
+      background: linear-gradient(135deg, var(--prism-cyan), var(--hyper-teal));
+      color: var(--deep-night);
+      box-shadow: 0 4px 12px rgba(77, 229, 255, 0.3);
+    }
+
+    .button-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(77, 229, 255, 0.4);
+    }
+
+    .save-status {
+      text-align: center;
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .save-status.success {
+      background: rgba(124, 255, 207, 0.1);
+      color: var(--green-flash);
+      border: 1px solid rgba(124, 255, 207, 0.3);
+    }
+
+    .save-status.error {
+      background: rgba(255, 99, 71, 0.1);
+      color: #FF6347;
+      border: 1px solid rgba(255, 99, 71, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>FlowFacilitator Settings</h1>
+      <p>Customize your focus experience</p>
+    </div>
+
+    <div class="glass-card">
+      <div class="setting-group">
+        <div class="setting-title">Blocking Behavior</div>
+        <div class="setting-description">
+          Configure how FlowFacilitator blocks distracting websites during your focus sessions.
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">Enable Website Blocking</div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="enable-blocking">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">Show Block Notifications</div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="show-notifications" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card">
+      <div class="setting-group">
+        <div class="setting-title">Focus Sessions</div>
+        <div class="setting-description">
+          Settings related to your flow state detection and session management.
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">Auto-start Sessions</div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="auto-start" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">Session Reminders</div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="session-reminders" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card">
+      <div class="setting-group">
+        <div class="setting-title">Privacy & Data</div>
+        <div class="setting-description">
+          Control how your focus data is collected and used.
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">Analytics Collection</div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="analytics" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">Data Synchronization</div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="sync-data" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 32px;">
+      <button class="button button-primary" id="save-settings">
+        Save Settings
+      </button>
+    </div>
+
+    <div class="save-status" id="save-status"></div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

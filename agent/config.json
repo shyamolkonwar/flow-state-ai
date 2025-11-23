@@ -1,0 +1,13 @@
+{
+    "supabase": {
+        "url": "https://fxombpzgqotfacyrlule.supabase.co",
+        "anon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4b21icHpncW90ZmFjeXJsdWxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM4OTE1ODYsImV4cCI6MjA3OTQ2NzU4Nn0.DbsgRs_SJM3oujOEvYiehaVzScnspFyETlRWJmEeTfY",
+        "service_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4b21icHpncW90ZmFjeXJsdWxlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2Mzg5MTU4NiwiZXhwIjoyMDc5NDY3NTg2fQ.IElnhiMc5CdlsDYoVvkKoONgYgLyraq5wohtEscct6w",
+        "max_retries": 3
+    },
+    "agent": {
+        "api_port": 8765,
+        "api_token": "local_dev_token_12345",
+        "log_level": "debug"
+    }
+}

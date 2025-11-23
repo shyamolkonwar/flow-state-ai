@@ -1,6 +1,37 @@
-# FlowFacilitator - AI Flow State Facilitator
+# FlowFacilitator 🎯
 
-> An intelligent macOS application that detects when you enter a flow state and automatically protects it from distractions.
+**AI-Powered Flow State Detection & Amplification for macOS**
+
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/shyamolkonwar/flow-state-ai/releases)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![macOS](https://img.shields.io/badge/macOS-12.0+-black.svg)](https://www.apple.com/macos/)
+[![Python](https://img.shields.io/badge/python-3.10+-yellow.svg)](https://www.python.org/)
+
+> Detect, amplify, and analyze your flow states with privacy-first, local-only tracking.
+
+## 🚀 Quick Start
+
+```bash
+git clone https://github.com/shyamolkonwar/flow-state-ai.git
+cd flow-state-ai
+./scripts/install.sh
+```
+
+**Then**: Start the agent, install the Chrome extension, and open the dashboard!
+
+👉 **[Full Quick Start Guide](QUICKSTART.md)**
+
+## 📖 Table of Contents
+
+- [Features](#-features)
+- [How It Works](#-how-it-works)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Documentation](#-documentation)
+- [Architecture](#-architecture)
+- [Development](#-development)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ## 🎯 What is FlowFacilitator?
 

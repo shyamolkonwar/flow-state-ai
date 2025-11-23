@@ -7,8 +7,24 @@ import time
 from collections import deque
 from typing import Callable, Optional
 from datetime import datetime
-from pynput import keyboard, mouse
-from AppKit import NSWorkspace
+
+# Try to import pynput, fallback to mock if not available
+try:
+    from pynput import keyboard, mouse  # noqa: F401
+    PYNPUT_AVAILABLE = True
+except (ImportError, AttributeError):
+    PYNPUT_AVAILABLE = False
+    keyboard = None
+    mouse = None
+    logging.getLogger(__name__).warning("pynput not available, using mock input collector")
+
+try:
+    from AppKit import NSWorkspace  # noqa: F401
+    APPKIT_AVAILABLE = True
+except ImportError:
+    APPKIT_AVAILABLE = False
+    NSWorkspace = None
+    logging.getLogger(__name__).warning("AppKit not available, app detection disabled")
 
 
 class Event:
@@ -41,21 +57,23 @@ class InputCollector:
         """Start collecting events"""
         self.logger.info("Starting input collector...")
         self.running = True
-        
-        # Start keyboard listener
-        self.keyboard_listener = keyboard.Listener(
-            on_press=self._on_key_press
-        )
-        self.keyboard_listener.start()
-        
-        # Start mouse listener
-        self.mouse_listener = mouse.Listener(
-            on_move=self._on_mouse_move,
-            on_click=self._on_mouse_click
-        )
-        self.mouse_listener.start()
-        
-        self.logger.info("Input collector started")
+
+        if PYNPUT_AVAILABLE:
+            # Start keyboard listener
+            self.keyboard_listener = keyboard.Listener(
+                on_press=self._on_key_press
+            )
+            self.keyboard_listener.start()
+
+            # Start mouse listener
+            self.mouse_listener = mouse.Listener(
+                on_move=self._on_mouse_move,
+                on_click=self._on_mouse_click
+            )
+            self.mouse_listener.start()
+            self.logger.info("Input collector started with pynput")
+        else:
+            self.logger.info("Input collector started in mock mode (pynput not available)")
     
     def stop(self):
         """Stop collecting events"""
@@ -108,25 +126,34 @@ class InputCollector:
     
     def get_foreground_app(self) -> Optional[str]:
         """Get the currently active application"""
+        if not APPKIT_AVAILABLE:
+            return None
+
         try:
+            if NSWorkspace is None:
+                return None
             workspace = NSWorkspace.sharedWorkspace()
+            if workspace is None:
+                return None
             active_app = workspace.activeApplication()
+            if active_app is None:
+                return None
             app_name = active_app['NSApplicationName']
-            
+
             # Detect app switch
             if app_name != self.current_app:
                 old_app = self.current_app
                 self.current_app = app_name
-                
+
                 if old_app is not None:  # Not first detection
                     event = Event('app_switch', time.time())
                     event.from_app = old_app
                     event.to_app = app_name
                     self.events.append(event)
-                    
+
                     if self.on_event:
                         self.on_event(event)
-            
+
             return app_name
         except Exception as e:
             self.logger.error(f"Error getting foreground app: {e}")

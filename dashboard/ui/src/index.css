@@ -1,20 +1,27 @@
 :root {
-  --primary: #667eea;
-  --primary-dark: #5568d3;
-  --secondary: #764ba2;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --gray-50: #f9fafb;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-300: #d1d5db;
-  --gray-400: #9ca3af;
-  --gray-500: #6b7280;
-  --gray-600: #4b5563;
-  --gray-700: #374151;
-  --gray-800: #1f2937;
-  --gray-900: #111827;
+  /* Crystal Clarity Color System */
+  --crystal-white: #FFFFFF;
+  --deep-night: #0B0710;
+  --black-nebula: #09060E;
+
+  /* Iridescent Accents */
+  --prism-cyan: #4DE5FF;
+  --hyper-teal: #2FE6C1;
+  --aurora-magenta: #FF6EC7;
+  --solar-gold: #FFC66B;
+
+  /* Electric Spectrum Tints */
+  --violet-edge: #C48BFF;
+  --flare-orange: #FF9A63;
+  --green-flash: #7CFFCF;
+
+  /* Legacy colors for compatibility */
+  --primary: var(--prism-cyan);
+  --primary-dark: var(--hyper-teal);
+  --secondary: var(--aurora-magenta);
+  --success: var(--green-flash);
+  --warning: var(--solar-gold);
+  --danger: var(--flare-orange);
 }
 
 * {
@@ -24,10 +31,28 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--gray-50);
-  color: var(--gray-900);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Display', sans-serif;
+  background: var(--deep-night);
+  color: var(--crystal-white);
   line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Premium Typography System */
+.headline {
+  font-family: 'Poppins', 'Sora', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.body-text {
+  font-family: 'Inter', 'SF Pro Display', sans-serif;
+  font-weight: 400;
+}
+
+.numeric {
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+  font-weight: 500;
 }
 
 #root {
@@ -242,4 +267,215 @@ label {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* 3D Glass Card Components */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 24px;
+  position: relative;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(6px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(77, 229, 255, 0.3),
+    rgba(255, 110, 199, 0.3),
+    transparent
+  );
+  border-radius: 24px 24px 0 0;
+}
+
+.glass-card:hover {
+  transform: translateY(0px);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.glass-card:hover::before {
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(77, 229, 255, 0.6),
+    rgba(255, 110, 199, 0.6),
+    transparent
+  );
+}
+
+/* Crystal Hover Light Animation */
+.crystal-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.crystal-hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(77, 229, 255, 0.3),
+    rgba(47, 230, 193, 0.3),
+    rgba(255, 110, 199, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.crystal-hover:hover::after {
+  left: 100%;
+}
+
+/* Glow-on-Focus */
+.glow-focus:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(77, 229, 255, 0.3),
+              0 0 0 4px rgba(47, 230, 193, 0.2);
+}
+
+/* Particle Field Background */
+.particle-field {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: drift 20s linear infinite;
+}
+
+.particle:nth-child(2n) {
+  animation-duration: 25s;
+  animation-delay: -5s;
+}
+
+.particle:nth-child(3n) {
+  animation-duration: 30s;
+  animation-delay: -10s;
+}
+
+@keyframes drift {
+  0% {
+    transform: translateY(100vh) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.1;
+  }
+  90% {
+    opacity: 0.1;
+  }
+  100% {
+    transform: translateY(-100px) translateX(100px);
+    opacity: 0;
+  }
+}
+
+/* Crystal Shard Background Elements */
+.crystal-shard {
+  position: absolute;
+  background: linear-gradient(135deg,
+    rgba(77, 229, 255, 0.1),
+    rgba(255, 110, 199, 0.1)
+  );
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  animation: shard-rotate 120s linear infinite;
+}
+
+.crystal-shard:nth-child(1) {
+  width: 200px;
+  height: 300px;
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.crystal-shard:nth-child(2) {
+  width: 150px;
+  height: 225px;
+  top: 60%;
+  right: 15%;
+  animation-delay: -30s;
+}
+
+.crystal-shard:nth-child(3) {
+  width: 100px;
+  height: 150px;
+  bottom: 20%;
+  left: 70%;
+  animation-delay: -60s;
+}
+
+@keyframes shard-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Flow State Indicator */
+.flow-indicator {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--solar-gold), var(--green-flash));
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  animation: flow-pulse 15s ease-in-out infinite;
+}
+
+@keyframes flow-pulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* Ambient Light Pulses */
+.ambient-pulse {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center,
+    rgba(77, 229, 255, 0.02) 0%,
+    transparent 50%
+  );
+  animation: ambient-breathe 15s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes ambient-breathe {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
 }

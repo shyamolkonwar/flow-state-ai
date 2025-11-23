@@ -72,3 +72,10 @@ temp/
 *.tmp
 
 phase6-integration-summary.md
+QUICKSTART.md
+RELEASE_NOTES.md
+design_doc.txt
+
+test_signup.py
+test_supabase_basic.py
+frontend_design.txt

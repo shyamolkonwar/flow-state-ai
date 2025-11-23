@@ -70,36 +70,91 @@ export default function Home() {
 
     return (
         <div>
-            <div style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '8px' }}>
-                    Welcome Back! 👋
+            <div style={{ marginBottom: '48px' }}>
+                <h1 className="headline" style={{
+                    fontSize: '42px',
+                    background: 'linear-gradient(135deg, var(--prism-cyan), var(--hyper-teal))',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    marginBottom: '12px',
+                    letterSpacing: '0.02em'
+                }}>
+                    Welcome Back! ✨
                 </h1>
-                <p style={{ color: '#6b7280' }}>
-                    Here's your focus summary for today
+                <p className="body-text" style={{
+                    fontSize: '18px',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    marginBottom: '8px'
+                }}>
+                    Crystal clarity in your focus journey
                 </p>
+                <div style={{
+                    width: '80px',
+                    height: '3px',
+                    background: 'linear-gradient(90deg, var(--prism-cyan), var(--hyper-teal))',
+                    borderRadius: '2px'
+                }}></div>
             </div>
 
             {/* Agent Status Banner */}
             {agentStatus && (
-                <div className="card" style={{
-                    marginBottom: '24px',
-                    background: agentStatus.flow_state === 'in_flow' ? '#d1fae5' : '#f3f4f6',
-                    borderLeft: `4px solid ${agentStatus.flow_state === 'in_flow' ? '#10b981' : '#9ca3af'}`
+                <div className="glass-card crystal-hover" style={{
+                    marginBottom: '32px',
+                    border: agentStatus.flow_state === 'in_flow'
+                        ? '1px solid rgba(124, 255, 207, 0.3)'
+                        : '1px solid rgba(255, 255, 255, 0.1)',
+                    position: 'relative',
+                    overflow: 'hidden'
                 }}>
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '4px',
+                        height: '100%',
+                        background: agentStatus.flow_state === 'in_flow'
+                            ? 'linear-gradient(180deg, var(--green-flash), var(--hyper-teal))'
+                            : 'rgba(255, 255, 255, 0.2)'
+                    }}></div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#6b7280', marginBottom: '4px' }}>
-                                Current Status
+                            <div className="body-text" style={{
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                marginBottom: '8px',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px'
+                            }}>
+                                Current Flow State
                             </div>
-                            <div style={{ fontSize: '20px', fontWeight: '700', color: agentStatus.flow_state === 'in_flow' ? '#065f46' : '#4b5563' }}>
-                                {agentStatus.flow_state === 'in_flow' ? '🎯 In Flow' :
-                                    agentStatus.flow_state === 'working' ? '⚡ Working' : '💤 Idle'}
+                            <div className="headline" style={{
+                                fontSize: '24px',
+                                color: agentStatus.flow_state === 'in_flow'
+                                    ? 'var(--green-flash)'
+                                    : agentStatus.flow_state === 'working'
+                                        ? 'var(--solar-gold)'
+                                        : 'rgba(255, 255, 255, 0.7)'
+                            }}>
+                                {agentStatus.flow_state === 'in_flow' ? '💎 In Crystal Flow' :
+                                    agentStatus.flow_state === 'working' ? '⚡ Focused Work' : '🌙 Resting'}
                             </div>
                         </div>
                         {agentStatus.flow_state === 'in_flow' && (
                             <div style={{ textAlign: 'right' }}>
-                                <div style={{ fontSize: '14px', color: '#6b7280' }}>Time in Flow</div>
-                                <div style={{ fontSize: '24px', fontWeight: '700', color: '#065f46' }}>
+                                <div className="body-text" style={{
+                                    fontSize: '14px',
+                                    color: 'rgba(255, 255, 255, 0.6)',
+                                    marginBottom: '4px'
+                                }}>
+                                    Time in Flow
+                                </div>
+                                <div className="numeric" style={{
+                                    fontSize: '32px',
+                                    color: 'var(--green-flash)',
+                                    fontWeight: '700'
+                                }}>
                                     {Math.floor(agentStatus.time_in_state_seconds / 60)}m
                                 </div>
                             </div>
@@ -110,48 +165,249 @@ export default function Home() {
 
             <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                gap: '24px',
-                marginBottom: '32px'
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '32px',
+                marginBottom: '48px'
             }}>
-                <div className="metric-card">
-                    <div className="metric-icon">⏱️</div>
-                    <div className="metric-value">{stats.totalFlowTime}m</div>
-                    <div className="metric-label">Total Flow Time Today</div>
+                <div className="glass-card crystal-hover" style={{
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}>
+                    <div style={{
+                        position: 'absolute',
+                        top: '20px',
+                        right: '20px',
+                        width: '40px',
+                        height: '40px',
+                        background: 'linear-gradient(135deg, var(--prism-cyan), var(--hyper-teal))',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '20px'
+                    }}>
+                        ⏱️
+                    </div>
+                    <div className="numeric" style={{
+                        fontSize: '48px',
+                        fontWeight: '700',
+                        color: 'var(--prism-cyan)',
+                        marginBottom: '8px'
+                    }}>
+                        {stats.totalFlowTime}m
+                    </div>
+                    <div className="body-text" style={{
+                        fontSize: '16px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        fontWeight: '500'
+                    }}>
+                        Total Flow Time Today
+                    </div>
+                    <div style={{
+                        position: 'absolute',
+                        bottom: '20px',
+                        left: '20px',
+                        width: '60px',
+                        height: '3px',
+                        background: 'linear-gradient(90deg, var(--prism-cyan), var(--hyper-teal))',
+                        borderRadius: '2px'
+                    }}></div>
                 </div>
 
-                <div className="metric-card">
-                    <div className="metric-icon">📈</div>
-                    <div className="metric-value">{stats.sessionCount}</div>
-                    <div className="metric-label">Sessions Today</div>
+                <div className="glass-card crystal-hover" style={{
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}>
+                    <div style={{
+                        position: 'absolute',
+                        top: '20px',
+                        right: '20px',
+                        width: '40px',
+                        height: '40px',
+                        background: 'linear-gradient(135deg, var(--hyper-teal), var(--aurora-magenta))',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '20px'
+                    }}>
+                        📈
+                    </div>
+                    <div className="numeric" style={{
+                        fontSize: '48px',
+                        fontWeight: '700',
+                        color: 'var(--hyper-teal)',
+                        marginBottom: '8px'
+                    }}>
+                        {stats.sessionCount}
+                    </div>
+                    <div className="body-text" style={{
+                        fontSize: '16px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        fontWeight: '500'
+                    }}>
+                        Flow Sessions Today
+                    </div>
+                    <div style={{
+                        position: 'absolute',
+                        bottom: '20px',
+                        left: '20px',
+                        width: '60px',
+                        height: '3px',
+                        background: 'linear-gradient(90deg, var(--hyper-teal), var(--aurora-magenta))',
+                        borderRadius: '2px'
+                    }}></div>
                 </div>
 
-                <div className="metric-card">
-                    <div className="metric-icon">🏆</div>
-                    <div className="metric-value">{stats.longestSession}m</div>
-                    <div className="metric-label">Longest Session</div>
+                <div className="glass-card crystal-hover" style={{
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}>
+                    <div style={{
+                        position: 'absolute',
+                        top: '20px',
+                        right: '20px',
+                        width: '40px',
+                        height: '40px',
+                        background: 'linear-gradient(135deg, var(--solar-gold), var(--flare-orange))',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '20px'
+                    }}>
+                        🏆
+                    </div>
+                    <div className="numeric" style={{
+                        fontSize: '48px',
+                        fontWeight: '700',
+                        color: 'var(--solar-gold)',
+                        marginBottom: '8px'
+                    }}>
+                        {stats.longestSession}m
+                    </div>
+                    <div className="body-text" style={{
+                        fontSize: '16px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        fontWeight: '500'
+                    }}>
+                        Longest Crystal Session
+                    </div>
+                    <div style={{
+                        position: 'absolute',
+                        bottom: '20px',
+                        left: '20px',
+                        width: '60px',
+                        height: '3px',
+                        background: 'linear-gradient(90deg, var(--solar-gold), var(--flare-orange))',
+                        borderRadius: '2px'
+                    }}></div>
                 </div>
 
-                <div className="metric-card">
-                    <div className="metric-icon">📊</div>
-                    <div className="metric-value">{stats.averageSession}m</div>
-                    <div className="metric-label">Average Session</div>
+                <div className="glass-card crystal-hover" style={{
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}>
+                    <div style={{
+                        position: 'absolute',
+                        top: '20px',
+                        right: '20px',
+                        width: '40px',
+                        height: '40px',
+                        background: 'linear-gradient(135deg, var(--aurora-magenta), var(--violet-edge))',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '20px'
+                    }}>
+                        📊
+                    </div>
+                    <div className="numeric" style={{
+                        fontSize: '48px',
+                        fontWeight: '700',
+                        color: 'var(--aurora-magenta)',
+                        marginBottom: '8px'
+                    }}>
+                        {stats.averageSession}m
+                    </div>
+                    <div className="body-text" style={{
+                        fontSize: '16px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        fontWeight: '500'
+                    }}>
+                        Average Flow Depth
+                    </div>
+                    <div style={{
+                        position: 'absolute',
+                        bottom: '20px',
+                        left: '20px',
+                        width: '60px',
+                        height: '3px',
+                        background: 'linear-gradient(90deg, var(--aurora-magenta), var(--violet-edge))',
+                        borderRadius: '2px'
+                    }}></div>
                 </div>
             </div>
 
-            <div className="card">
-                <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>
-                    Quick Actions
+            <div className="glass-card">
+                <h2 className="headline" style={{
+                    fontSize: '24px',
+                    color: 'var(--crystal-white)',
+                    marginBottom: '24px',
+                    letterSpacing: '0.02em'
+                }}>
+                    Crystal Actions
                 </h2>
-                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                    <button className="button button-primary" onClick={() => window.location.href = '/sessions'}>
-                        View All Sessions
+                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                    <button className="button crystal-hover" style={{
+                        padding: '14px 24px',
+                        background: 'linear-gradient(135deg, var(--prism-cyan), var(--hyper-teal))',
+                        color: 'var(--deep-night)',
+                        border: 'none',
+                        borderRadius: '12px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }} onClick={() => window.location.href = '/sessions'}>
+                        View Flow Sessions
                     </button>
-                    <button className="button button-secondary" onClick={() => window.location.href = '/settings'}>
-                        Adjust Settings
+                    <button className="button crystal-hover" style={{
+                        padding: '14px 24px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'var(--crystal-white)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '12px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                    }} onClick={() => window.location.href = '/settings'}>
+                        Tune Crystal Settings
                     </button>
-                    <button className="button button-secondary" onClick={() => window.location.href = '/gamification'}>
-                        View RPG Stats
+                    <button className="button crystal-hover" style={{
+                        padding: '14px 24px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'var(--crystal-white)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '12px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                    }} onClick={() => window.location.href = '/gamification'}>
+                        RPG Crystal Stats
                     </button>
                 </div>
             </div>

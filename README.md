@@ -1,4 +1,4 @@
-# FlowFacilitator 🎯
+# FlowFacilitator
 
 **AI-Powered Flow State Detection & Amplification for macOS**
 
@@ -9,7 +9,7 @@
 
 > Detect, amplify, and analyze your flow states with privacy-first, local-only tracking.
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 git clone https://github.com/shyamolkonwar/flow-state-ai.git
@@ -19,7 +19,7 @@ cd flow-state-ai
 
 **Then**: Start the agent, install the Chrome extension, and open the dashboard!
 
-## 📖 Table of Contents
+## Table of Contents
 
 - [Features](#-features)
 - [How It Works](#-how-it-works)
@@ -32,7 +32,7 @@ cd flow-state-ai
 - [Development](#-development)
 - [License](#-license)
 
-## 🎯 What is FlowFacilitator?
+## What is FlowFacilitator?
 
 FlowFacilitator helps students and knowledge workers achieve and maintain deep focus by:
 - **Automatically detecting** when you enter a flow state based on your work patterns
@@ -40,7 +40,7 @@ FlowFacilitator helps students and knowledge workers achieve and maintain deep f
 - **Tracking your progress** with detailed analytics and insights
 - **Building focus stamina** over time through intelligent interventions
 
-## 🔒 Privacy First
+## Privacy First
 
 - ✅ **100% Local** - All data stays on your Mac
 - ✅ **No Content Capture** - We only record timestamps, never what you type
@@ -65,7 +65,7 @@ FlowFacilitator helps students and knowledge workers achieve and maintain deep f
 - [Dashboard Specification](dashboard/spec.md) - Web UI
 - [Sequence Diagrams](docs/sequence-diagrams.md) - System interactions
 
-## 🏛️ Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -94,7 +94,7 @@ FlowFacilitator helps students and knowledge workers achieve and maintain deep f
 - **Dashboard**: Displays analytics and settings (React + Vite)
 - **Supabase**: Remote PostgreSQL database with authentication and real-time features
 
-## 🚀 Quick Start (For Developers)
+## Quick Start (For Developers)
 
 ### Prerequisites
 - macOS 12+
@@ -125,11 +125,18 @@ npm run dev
 # 2. Enable Developer mode
 # 3. Click "Load unpacked"
 # 4. Select chrome-extension/ directory
+
+# Set up Native Messaging (Required for blocking to work)
+# 1. Run the native messaging setup script:
+#    ./scripts/install-native-messaging.sh
+# 2. When prompted, enter your extension ID from chrome://extensions/
+# 3. The script will create the native messaging manifest
+# 4. Make sure the agent is running for extension communication
 ```
 
 See [Development Setup Guide](docs/dev-setup.md) for detailed instructions.
 
-## 🍎 macOS Swift App Setup
+## macOS Swift App Setup
 
 FlowFacilitator includes a native macOS menu bar application built with Swift and SwiftUI.
 
@@ -252,6 +259,210 @@ The database schema is defined in `supabase/migrations/20251123100727_remote_sch
 - Event logging
 - Automatic triggers for user creation
 
+## Local Supabase Setup (Fully Local Version)
+
+For users who prefer a completely local setup without relying on Supabase's cloud services, you can run Supabase locally using Docker.
+
+### Prerequisites
+- Docker and Docker Compose
+- Supabase CLI (`npm install -g supabase`)
+
+### Step 1: Install Supabase CLI
+
+```bash
+npm install -g supabase
+```
+
+### Step 2: Initialize Local Supabase Project
+
+```bash
+# Initialize Supabase in your project
+supabase init
+
+# This will create a config.toml file and supabase directory structure
+```
+
+### Step 3: Configure Local Supabase
+
+Edit the generated `config.toml` file to match your project needs:
+
+```toml
+# A string used to distinguish different Supabase projects on the same host. Defaults to the
+# working directory name when running `supabase init`.
+project_id = "flow-state-ai"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[realtime]
+enabled = true
+port = 54323
+
+[studio]
+enabled = true
+port = 54324
+
+[inbucket]
+enabled = true
+port = 54325
+
+[storage]
+enabled = true
+port = 54326
+
+[auth]
+enabled = true
+port = 54327
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://localhost:3000"]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+
+[auth.sms]
+enable_signup = true
+test_otp = "123456"
+messagebird_access_key = ""
+messagebird_originator = ""
+twilio_account_sid = ""
+twilio_message_service_sid = ""
+twilio_auth_token = ""
+
+[edge_functions]
+enabled = true
+port = 54328
+```
+
+### Step 4: Start Local Supabase Services
+
+```bash
+# Start all Supabase services locally
+supabase start
+
+# This will start PostgreSQL, Auth, Storage, Edge Functions, etc.
+```
+
+### Step 5: Run Database Migrations
+
+```bash
+# Apply the database schema
+supabase db reset
+
+# Or manually run the migration
+supabase db push
+```
+
+### Step 6: Configure Environment Variables
+
+Update your `.env` files to use local Supabase URLs:
+
+For the dashboard (`dashboard/ui/.env`):
+```bash
+VITE_SUPABASE_URL=http://localhost:54321
+VITE_SUPABASE_ANON_KEY=your-local-anon-key
+VITE_AGENT_API_URL=http://localhost:8765
+VITE_AGENT_API_TOKEN=local_dev_token_12345
+```
+
+For the agent (`agent/config.json`):
+```json
+{
+  "supabase": {
+    "url": "http://localhost:54321",
+    "anon_key": "your-local-anon-key",
+    "service_role_key": "your-local-service-role-key"
+  }
+}
+```
+
+### Step 7: Get Local API Keys
+
+```bash
+# Get the local API keys
+supabase status
+
+# Look for the anon key and service_role key in the output
+```
+
+### Step 8: Seed Initial Data (Optional)
+
+```bash
+# Run seed files if needed
+supabase db reset  # This will also run seed files if configured
+```
+
+### Local Development Workflow
+
+```bash
+# Start local Supabase
+supabase start
+
+# In another terminal, start the agent
+cd agent && python main.py --dev
+
+# In another terminal, start the dashboard
+cd dashboard/ui && npm run dev
+
+# Access local Supabase Studio
+# Open http://localhost:54324 in your browser
+```
+
+### Stopping Local Supabase
+
+```bash
+# Stop all services
+supabase stop
+
+# Or stop specific services
+supabase stop db
+supabase stop auth
+```
+
+### Troubleshooting Local Setup
+
+**Port conflicts:**
+- Change ports in `config.toml` if you have conflicts
+- Common conflicts: PostgreSQL (5432), Supabase services (54321-54328)
+
+**Database connection issues:**
+- Ensure Docker is running
+- Check `supabase status` for service health
+- Reset database: `supabase db reset`
+
+**Auth not working:**
+- Check that auth service is running: `supabase status`
+- Verify JWT secrets in `config.toml`
+
+**Migration issues:**
+- Ensure migrations are in the correct directory
+- Check migration syntax
+- Use `supabase db diff` to see changes
+
+### Benefits of Local Setup
+
+- ✅ **Complete privacy** - No data leaves your machine
+- ✅ **Faster development** - No network latency
+- ✅ **Full control** - Modify database schema freely
+- ✅ **Offline capable** - Works without internet
+- ✅ **Cost-free** - No Supabase hosting fees
+
+### Switching Between Local and Remote
+
+You can easily switch between local and remote Supabase by changing the environment variables in your `.env` files and `config.json`.
+
 ## ✨ Key Features
 
 ### Core Flow Detection
@@ -299,7 +510,7 @@ The database schema is defined in `supabase/migrations/20251123100727_remote_sch
 - Adjust detection sensitivity
 - Complete data deletion
 
-## 🎨 Features
+## Features
 
 ### Automatic Flow Detection
 - Monitors typing cadence, app focus, and idle time
@@ -323,7 +534,7 @@ The database schema is defined in `supabase/migrations/20251123100727_remote_sch
 - Adjust detection sensitivity
 - Complete data deletion
 
-## 📊 How It Works
+## How It Works
 
 ### Flow Entry Criteria (Default)
 All conditions must be met for 5 minutes:
@@ -347,7 +558,7 @@ See [Flow Detection Config](docs/flow-detection-config.md) for details.
 - **Database**: Supabase (PostgreSQL + Real-time)
 - **Packaging**: macOS app bundle (signed & notarized)
 
-## 📝 License
+## License
 
 This software is proprietary and all rights are reserved by Shyamol Konwar. No part of this software may be reproduced, distributed, or transmitted in any form or by any means without prior written permission from Shyamol Konwar.
 
@@ -355,12 +566,12 @@ For licensing inquiries, please contact Shyamol Konwar.
 
 
 
-## 📧 Contact
+## Contact
 
 Email: shyamol@fusionfocus.in  
 Website: https://fusionfocus.in
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 Built for students and knowledge workers who want to achieve deeper, more sustained focus in an increasingly distracting digital world.
 

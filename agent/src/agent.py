@@ -11,6 +11,7 @@ from .input_collector import InputCollector
 from .metrics_engine import RollingMetrics
 from .flow_engine import FlowRuleEngine, FlowState
 from .database import DatabaseClient
+from .auth_service import AuthService
 from .protection import ProtectionController
 from .overlay_manager import OverlayManager
 from .micro_interventions import MicroIntervention
@@ -28,18 +29,19 @@ class FlowAgent:
         self.running = False
         
         # Load flow detection config from database or use defaults
+        # NOTE: Thresholds lowered for easier testing
         self.flow_config = {
             'entry': {
-                'typing_rate_min': 40,
+                'typing_rate_min': 10,  # Lowered from 40 for testing
                 'app_switches_max': 2,
                 'max_idle_gap_seconds': 4,
-                'window_seconds': 300
+                'window_seconds': 30  # Lowered from 300 (5 min) to 30 sec for testing
             },
             'exit': {
-                'typing_rate_min': 30,
-                'app_switches_max': 2,
+                'typing_rate_min': 5,   # Lowered from 30 for testing
+                'app_switches_max': 5,
                 'max_idle_gap_seconds': 6,
-                'delay_seconds': 30
+                'delay_seconds': 10  # Lowered from 30 sec for testing
             }
         }
         
@@ -51,17 +53,24 @@ class FlowAgent:
         ]
         
         # Components
+        self._auth = None  # Lazy initialization to avoid keyring conflicts
         self.db = DatabaseClient(config)
         self.input_collector = InputCollector(on_event=self._on_event)
         self.metrics = RollingMetrics()
         self.flow_engine = FlowRuleEngine(self.flow_config, on_flow_change=self._on_flow_change)
-        self.protection = ProtectionController(config)
+        
+        # Communication (create before protection so it can be passed)
+        self.native_messaging = NativeMessagingHost(on_message=self._on_extension_message)
+        
+        # Protection controller (needs native messaging)
+        self.protection = ProtectionController(config, native_messaging_host=self.native_messaging)
+        
+        # Other components
         self.overlay_manager = OverlayManager(on_flow_broken=self._on_flow_broken)
         self.micro_intervention = MicroIntervention()
         self.gamification = GamificationSystem()
         
-        # Communication
-        self.native_messaging = NativeMessagingHost(on_message=self._on_extension_message)
+        # API Server
         self.api_server = AgentAPIServer(self, config)
         
         # Current session
@@ -147,24 +156,25 @@ class FlowAgent:
                 if len(self.metrics_history) > 20:  # Keep last 20 samples
                     self.metrics_history.pop(0)
                 
-                # Check for cognitive fatigue
-                if self.flow_engine.get_state() == FlowState.IN_FLOW:
-                    if self.micro_intervention.detect_cognitive_fatigue(metrics, self.metrics_history):
-                        self.logger.info("Triggering micro-intervention")
-                        # Run intervention in separate thread
-                        import threading
-                        threading.Thread(
-                            target=self.micro_intervention.trigger_soft_reset,
-                            args=(30,),
-                            daemon=True
-                        ).start()
-                
                 # Evaluate flow state
                 self.flow_engine.evaluate(metrics)
                 
                 # Log metrics periodically (every 10 seconds)
                 if int(time.time()) % 10 == 0:
                     self.logger.debug(f"Metrics: {metrics}, State: {self.flow_engine.get_state().value}")
+                
+                # DISABLED: Micro-interventions cause threading issues with tkinter on macOS
+                # Check for cognitive fatigue
+                # if self.flow_engine.get_state() == FlowState.IN_FLOW:
+                #     if self.micro_intervention.detect_cognitive_fatigue(metrics, self.metrics_history):
+                #         self.logger.info("Triggering micro-intervention")
+                #         # Run intervention in separate thread
+                #         import threading
+                #         threading.Thread(
+                #             target=self.micro_intervention.trigger_soft_reset,
+                #             args=(30,),
+                #             daemon=True
+                #         ).start()
                 
                 time.sleep(check_interval)
                 
@@ -177,6 +187,10 @@ class FlowAgent:
         # Update metrics
         self.metrics.update_from_event(event)
         
+        # Only log events to database if we have an active session
+        if not self.current_session_id:
+            return
+        
         # Log certain events to database
         if event.type in ['app_switch', 'flow_on', 'flow_off']:
             payload = {}
@@ -184,7 +198,8 @@ class FlowAgent:
                 payload['from_app'] = event.from_app
                 payload['to_app'] = event.to_app
             
-            self.db.insert_event(self.current_session_id, event.type, payload)
+            user_id = self._get_user_id()
+            self.db.insert_event(user_id, self.current_session_id, event.type, payload)
     
     def _on_flow_change(self, old_state: FlowState, new_state: FlowState, reason: str = None):
         """Handle flow state changes"""
@@ -228,17 +243,51 @@ class FlowAgent:
 
         return {'status': 'error', 'message': 'Unknown command'}
     
+    @property
+    def auth(self):
+        """Lazy initialization of auth service"""
+        if self._auth is None:
+            try:
+                self._auth = AuthService(self.config)
+            except Exception as e:
+                self.logger.error(f"Failed to initialize auth service: {e}")
+                # Return a dummy object that always returns None for user_id
+                class DummyAuth:
+                    def is_authenticated(self): return False
+                    current_user = None
+                self._auth = DummyAuth()
+        return self._auth
+    
+    def _get_user_id(self) -> Optional[str]:
+        """Get current user ID from auth service"""
+        # DEMO MODE: Hardcoded user ID for demonstration
+        # TODO: Remove this and use actual authentication for production
+        return "d368e836-63ed-438b-8513-e7799961822d"
+        
+        # Original auth code (commented out for demo):
+        # try:
+        #     if self.auth.is_authenticated() and self.auth.current_user:
+        #         return self.auth.current_user.id
+        # except Exception as e:
+        #     self.logger.warning(f"Could not get user ID: {e}")
+        # return None
+    
     def _start_session(self):
         """Start a new flow session"""
         current_app = self.input_collector.get_foreground_app()
         self.session_start_app = current_app
         self.session_start_time = time.time()
         
+        # Get user ID (may be None if not authenticated)
+        user_id = self._get_user_id()
+        if not user_id:
+            self.logger.warning("No authenticated user - session will be created without user_id")
+        
         # Start session in database
-        self.current_session_id = self.db.start_session(current_app or "Unknown")
+        self.current_session_id = self.db.start_session(user_id, current_app or "Unknown")
         
         # Log flow_on event
-        self.db.insert_event(self.current_session_id, 'flow_on', {
+        self.db.insert_event(user_id, self.current_session_id, 'flow_on', {
             'app': current_app
         })
         
@@ -249,7 +298,7 @@ class FlowAgent:
         blocked_apps = ['Steam', 'Instagram', 'Facebook', 'Twitter', 'TikTok', 'Netflix']
         self.overlay_manager.set_blocked_apps(blocked_apps)
         
-        self.logger.info(f"Started flow session: {self.current_session_id}")
+        self.logger.info(f"Started flow session: {self.current_session_id} for user: {user_id}")
     
     def _end_session(self, reason: str):
         """End the current flow session"""
@@ -258,6 +307,7 @@ class FlowAgent:
         
         current_app = self.input_collector.get_foreground_app()
         metrics = self.metrics.get_all_metrics()
+        user_id = self._get_user_id()
         
         # Calculate session duration
         duration_seconds = time.time() - self.session_start_time if self.session_start_time else 0
@@ -273,7 +323,7 @@ class FlowAgent:
         )
         
         # Log flow_off event
-        self.db.insert_event(self.current_session_id, 'flow_off', {
+        self.db.insert_event(user_id, self.current_session_id, 'flow_off', {
             'app': current_app,
             'reason': reason
         })

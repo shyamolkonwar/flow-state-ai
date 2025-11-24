@@ -36,22 +36,22 @@ class FlowRuleEngine:
         """Evaluate current metrics and update state"""
         current_time = time.time()
         
-        # Get thresholds from config
-        entry = self.config['entry']
-        exit_cfg = self.config['exit']
+        # Get thresholds from config with defaults
+        entry = self.config.get('entry', {})
+        exit_cfg = self.config.get('exit', {})
         
         # Check entry criteria
         entry_criteria_met = (
-            metrics['typing_rate'] >= entry['typing_rate_min'] and
-            metrics['app_switch_count'] <= entry['app_switches_max'] and
-            metrics['max_idle_gap'] <= entry['max_idle_gap_seconds']
+            metrics['typing_rate'] >= entry.get('typing_rate_min', 40) and
+            metrics['app_switch_count'] <= entry.get('app_switches_max', 2) and
+            metrics['max_idle_gap'] <= entry.get('max_idle_gap_seconds', 4)
         )
         
         # Check exit criteria
         exit_criteria_met = (
-            metrics['typing_rate'] < exit_cfg['typing_rate_min'] or
-            metrics['app_switch_count'] > exit_cfg['app_switches_max'] or
-            metrics['max_idle_gap'] > exit_cfg['max_idle_gap_seconds']
+            metrics['typing_rate'] < exit_cfg.get('typing_rate_min', 30) or
+            metrics['app_switch_count'] > exit_cfg.get('app_switches_max', 2) or
+            metrics['max_idle_gap'] > exit_cfg.get('max_idle_gap_seconds', 6)
         )
         
         # State machine logic
@@ -65,7 +65,7 @@ class FlowRuleEngine:
                 else:
                     # Check if criteria have been met long enough
                     duration = current_time - self.flow_criteria_met_since
-                    if duration >= entry['window_seconds']:
+                    if duration >= entry.get('window_seconds', 300):
                         self._transition_to(FlowState.IN_FLOW)
             else:
                 # Criteria not met, reset
@@ -79,7 +79,7 @@ class FlowRuleEngine:
                 else:
                     # Check if exit criteria have persisted long enough
                     duration = current_time - self.exit_criteria_met_since
-                    if duration >= exit_cfg['delay_seconds']:
+                    if duration >= exit_cfg.get('delay_seconds', 30):
                         reason = self._get_exit_reason(metrics, exit_cfg)
                         self._transition_to(FlowState.WORKING, reason=reason)
             else:
@@ -110,11 +110,11 @@ class FlowRuleEngine:
     
     def _get_exit_reason(self, metrics: Dict, exit_cfg: Dict) -> str:
         """Determine why flow state is exiting"""
-        if metrics['typing_rate'] < exit_cfg['typing_rate_min']:
+        if metrics['typing_rate'] < exit_cfg.get('typing_rate_min', 30):
             return "low_typing_rate"
-        elif metrics['app_switch_count'] > exit_cfg['app_switches_max']:
+        elif metrics['app_switch_count'] > exit_cfg.get('app_switches_max', 2):
             return "excessive_app_switches"
-        elif metrics['max_idle_gap'] > exit_cfg['max_idle_gap_seconds']:
+        elif metrics['max_idle_gap'] > exit_cfg.get('max_idle_gap_seconds', 6):
             return "idle"
         return "unknown"
     

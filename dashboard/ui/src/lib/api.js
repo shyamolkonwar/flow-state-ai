@@ -11,12 +11,27 @@ const AGENT_API_TOKEN = import.meta.env.VITE_AGENT_API_TOKEN
 
 export const agentAPI = {
     async getStatus() {
-        const response = await fetch(`${AGENT_API_URL}/status`, {
-            headers: {
-                'Authorization': `Bearer ${AGENT_API_TOKEN}`
+        try {
+            const response = await fetch(`${AGENT_API_URL}/status`, {
+                headers: {
+                    'Authorization': `Bearer ${AGENT_API_TOKEN}`
+                }
+            })
+            if (!response.ok) {
+                throw new Error(`Agent API returned ${response.status}`)
             }
-        })
-        return response.json()
+            return await response.json()
+        } catch (error) {
+            console.warn('Agent service not available, using mock data:', error.message)
+            // Return mock data for development
+            return {
+                flow_state: 'working',
+                time_in_state_seconds: 1800,
+                current_app: 'Visual Studio Code',
+                typing_rate: 350,
+                distractions_blocked_today: 12
+            }
+        }
     },
 
     async pause(durationMinutes) {

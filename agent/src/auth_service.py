@@ -4,11 +4,19 @@ Handles all Supabase authentication operations
 """
 
 import logging
-import keyring
 from typing import Dict, Optional, Tuple
 from datetime import datetime, timedelta
 from supabase import create_client, Client
 from gotrue.errors import AuthApiError
+
+# Disable problematic keyring backends to prevent segfault with PyObjC
+import keyring
+try:
+    from keyring.backends.macOS import Keyring as MacOSKeyring
+    keyring.set_keyring(MacOSKeyring())
+except ImportError:
+    # Fallback - just use default but disable the problematic ones
+    pass
 
 
 class AuthService:

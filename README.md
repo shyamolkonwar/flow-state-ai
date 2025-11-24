@@ -3,7 +3,7 @@
 **AI-Powered Flow State Detection & Amplification for macOS**
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/shyamolkonwar/flow-state-ai/releases)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Proprietary-red.svg)](LICENSE)
 [![macOS](https://img.shields.io/badge/macOS-12.0+-black.svg)](https://www.apple.com/macos/)
 [![Python](https://img.shields.io/badge/python-3.10+-yellow.svg)](https://www.python.org/)
 
@@ -19,8 +19,6 @@ cd flow-state-ai
 
 **Then**: Start the agent, install the Chrome extension, and open the dashboard!
 
-👉 **[Full Quick Start Guide](QUICKSTART.md)**
-
 ## 📖 Table of Contents
 
 - [Features](#-features)
@@ -29,8 +27,9 @@ cd flow-state-ai
 - [Usage](#-usage)
 - [Documentation](#-documentation)
 - [Architecture](#-architecture)
+- [macOS Swift App Setup](#-macos-swift-app-setup)
+- [Supabase Setup](#-supabase-setup)
 - [Development](#-development)
-- [Contributing](#-contributing)
 - [License](#-license)
 
 ## 🎯 What is FlowFacilitator?
@@ -48,21 +47,6 @@ FlowFacilitator helps students and knowledge workers achieve and maintain deep f
 - ✅ **No Cloud Sync** - No external servers, no tracking
 - ✅ **Complete Control** - Export or delete your data anytime
 
-## 🏗️ Project Status
-
-**Current Phase**: Phase 1 - Requirements Analysis and Design ✅ **COMPLETE**
-
-This project is being built in 8 phases:
-1. ✅ Requirements Analysis and Design
-2. ⏳ Infrastructure Setup
-3. ⏳ Agent Core Development
-4. ⏳ Chrome Extension Development
-5. ⏳ Dashboard Development
-6. ⏳ Integration and Testing
-7. ⏳ Packaging and Documentation
-8. ⏳ Pilot Testing and Iteration
-
-See [mvp_phases.md](mvp_phases.md) for detailed phase breakdown.
 
 ## 📚 Documentation
 
@@ -80,7 +64,6 @@ See [mvp_phases.md](mvp_phases.md) for detailed phase breakdown.
 - [Chrome Extension Specification](chrome-extension/spec.md) - Browser helper
 - [Dashboard Specification](dashboard/spec.md) - Web UI
 - [Sequence Diagrams](docs/sequence-diagrams.md) - System interactions
-- [Database Schema](infra/supabase/migrations/001_initial_schema.sql) - Data model
 
 ## 🏛️ Architecture
 
@@ -92,15 +75,14 @@ See [mvp_phases.md](mvp_phases.md) for detailed phase breakdown.
 │  │   macOS      │◄────►│   Chrome     │                │
 │  │   Agent      │      │  Extension   │                │
 │  └──────┬───────┘      └──────────────┘                │
-│         │                                                │
 │         │              ┌──────────────┐                 │
-│         ├─────────────►│  Dashboard   │                 │
-│         │              │   (Web UI)   │                 │
-│         │              └──────────────┘                 │
-│         │                                                │
-│         │              ┌──────────────┐                 │
-│         └─────────────►│  Supabase    │                 │
-│                        │   (Local)    │                 │
+│         ├─────────────►│  Dashboard   │◄─────────────┐ │
+│         │              │   (Web UI)   │              │ │
+│         │              └──────────────┘              │ │
+│         │                                             │ │
+│         │              ┌──────────────┐              │ │
+│         └─────────────►│  Supabase    │◄─────────────┘ │
+│                        │   (Remote)   │                 │
 │                        └──────────────┘                 │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -110,13 +92,12 @@ See [mvp_phases.md](mvp_phases.md) for detailed phase breakdown.
 - **macOS Agent**: Monitors user behavior, detects flow states, controls protections
 - **Chrome Extension**: Blocks distracting websites during flow
 - **Dashboard**: Displays analytics and settings (React + Vite)
-- **Supabase Local**: PostgreSQL database with realtime capabilities
+- **Supabase**: Remote PostgreSQL database with authentication and real-time features
 
 ## 🚀 Quick Start (For Developers)
 
 ### Prerequisites
 - macOS 12+
-- Docker Desktop
 - Node.js 18+
 - Python 3.10+
 - Chrome browser
@@ -128,12 +109,8 @@ See [mvp_phases.md](mvp_phases.md) for detailed phase breakdown.
 git clone https://github.com/yourusername/flow-state-ai.git
 cd flow-state-ai
 
-# Start local database
-cd infra/supabase
-docker-compose up -d
-
 # Set up agent
-cd ../../agent
+cd agent
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -151,6 +128,129 @@ npm run dev
 ```
 
 See [Development Setup Guide](docs/dev-setup.md) for detailed instructions.
+
+## 🍎 macOS Swift App Setup
+
+FlowFacilitator includes a native macOS menu bar application built with Swift and SwiftUI.
+
+### Prerequisites
+- **macOS 12.0+**
+- **Xcode 15+** (available from Mac App Store)
+- **Swift 5.9+**
+- **Python agent** running on `localhost:8765`
+
+### Step 1: Open Xcode Project
+
+```bash
+cd FlowFacilitator/FlowFacilitator
+
+# Open the Xcode project
+open FlowFacilitator.xcodeproj
+```
+
+### Step 2: Configure Project Settings
+
+In Xcode:
+
+1. **Select the project** in the Project Navigator
+2. **Select the FlowFacilitator target**
+3. **Go to Signing & Capabilities tab**
+4. **Enable App Sandbox**
+5. **Under App Sandbox**, enable:
+   - ✅ **Outgoing Connections (Network Client)**
+   - ✅ **Incoming Connections (Network Server)**
+
+### Step 3: Build and Run
+
+```bash
+# In Xcode: Product → Run (⌘R)
+# Or command line:
+xcodebuild -project FlowFacilitator.xcodeproj \
+  -scheme FlowFacilitator \
+  -configuration Debug \
+  build
+```
+
+### Step 4: Grant Permissions
+
+After first launch, grant these permissions in **System Preferences → Security & Privacy**:
+
+- **Accessibility** - Required for activity monitoring
+- **Input Monitoring** - Required for keyboard/mouse tracking
+- **Screen Recording** - Optional, for app usage detection
+
+### Features
+
+- **Menu Bar Icon** - Shows current flow state (Idle/Flow/Tracking/Error)
+- **Authentication** - Login/signup with secure Keychain storage
+- **Onboarding** - 4-page guided setup process
+- **Agent Control** - Start/stop/restart the Python agent
+- **Preferences** - Account management and settings
+- **Dashboard Access** - Quick link to web dashboard
+
+### Troubleshooting
+
+**App doesn't appear in menu bar:**
+- Check that `LSUIElement` is set to `true` in Info.plist
+
+**Permissions not working:**
+- Restart the app after granting permissions
+- Check System Preferences → Security & Privacy
+
+**Agent communication fails:**
+- Ensure Python agent is running on port 8765
+- Check firewall settings
+
+## 🗄️ Supabase Setup
+
+FlowFacilitator uses Supabase as the remote database for user authentication, session tracking, and analytics.
+
+### Database Schema
+
+The database includes the following tables:
+- **all_users**: User profiles with onboarding status
+- **sessions**: Flow session tracking with metrics
+- **events**: User activity events
+- **settings**: User preferences and configurations
+- **agent_logs**: Application logging
+
+### Supabase Configuration
+
+The Supabase URL and keys are configured through environment variables.
+
+### Environment Variables
+
+For the dashboard, copy `dashboard/ui/.env.example` to `dashboard/ui/.env` and update with your Supabase credentials:
+
+```bash
+cp dashboard/ui/.env.example dashboard/ui/.env
+```
+
+Then update the `.env` file with your actual Supabase URL and anon key:
+
+```bash
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+VITE_AGENT_API_URL=http://localhost:8765
+VITE_AGENT_API_TOKEN=local_dev_token_12345
+```
+
+### Database Features
+
+- **Row Level Security (RLS)**: Ensures users can only access their own data
+- **Real-time subscriptions**: Live updates for dashboard analytics
+- **Authentication**: Secure user signup/login with JWT tokens
+- **Functions**: Server-side functions for complex operations
+- **Indexes**: Optimized queries for performance
+
+### Migration
+
+The database schema is defined in `supabase/migrations/20251123100727_remote_schema.sql` and includes:
+- User management functions
+- Session tracking functions
+- Settings management
+- Event logging
+- Automatic triggers for user creation
 
 ## ✨ Key Features
 
@@ -189,7 +289,7 @@ See [Development Setup Guide](docs/dev-setup.md) for detailed instructions.
 - **Session History**: Complete timeline with metrics
 - **RPG Stats Page**: Level, XP, achievements, progressive goals
 - **Settings**: Configure thresholds and blocklist
-- **Real-time Updates**: Live data from Supabase visualization of your day
+- **Real-time Updates**: Live data visualization of your day
 - Long-term trends and insights
 - Export data as CSV
 
@@ -244,26 +344,24 @@ See [Flow Detection Config](docs/flow-detection-config.md) for details.
 - **Agent**: Python (macOS Accessibility APIs)
 - **Extension**: JavaScript (Chrome Manifest v3)
 - **Dashboard**: React + Vite
-- **Database**: Supabase (PostgreSQL + Realtime)
+- **Database**: Supabase (PostgreSQL + Real-time)
 - **Packaging**: macOS app bundle (signed & notarized)
 
 ## 📝 License
 
-[To be determined]
+This software is proprietary and all rights are reserved by Shyamol Konwar. No part of this software may be reproduced, distributed, or transmitted in any form or by any means without prior written permission from Shyamol Konwar.
 
-## 🤝 Contributing
+For licensing inquiries, please contact Shyamol Konwar.
 
-This project is currently in early development. Contribution guidelines will be added soon.
+
 
 ## 📧 Contact
 
-[To be determined]
+Email: shyamol@fusionfocus.in  
+Website: https://fusionfocus.in
 
 ## 🙏 Acknowledgments
 
 Built for students and knowledge workers who want to achieve deeper, more sustained focus in an increasingly distracting digital world.
 
 ---
-
-**Status**: Phase 1 Complete - Specifications and design finalized
-**Next**: Phase 2 - Infrastructure setup and development environment

@@ -1,26 +1,48 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/api'
+import { useAuth } from '../lib/AuthContext'
 import { format } from 'date-fns'
 
 export default function Sessions() {
+    const { user } = useAuth()
     const [sessions, setSessions] = useState([])
+    const [todaySessions, setTodaySessions] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        loadSessions()
-    }, [])
+        if (user) {
+            loadSessions()
+        }
+    }, [user])
 
     async function loadSessions() {
         try {
-            const { data, error } = await supabase
+            const today = new Date()
+            today.setHours(0, 0, 0, 0)
+
+            // Load today's sessions for stats
+            const { data: todayData, error: todayError } = await supabase
                 .from('sessions')
                 .select('*')
+                .eq('user_id', user.id)
+                .gte('start_ts', today.toISOString())
+                .not('end_ts', 'is', null)
+                .order('start_ts', { ascending: false })
+
+            if (todayError) throw todayError
+            setTodaySessions(todayData || [])
+
+            // Load all sessions for the timeline
+            const { data: allData, error: allError } = await supabase
+                .from('sessions')
+                .select('*')
+                .eq('user_id', user.id)
                 .not('end_ts', 'is', null)
                 .order('start_ts', { ascending: false })
                 .limit(50)
 
-            if (error) throw error
-            setSessions(data || [])
+            if (allError) throw allError
+            setSessions(allData || [])
         } catch (error) {
             console.error('Error loading sessions:', error)
         } finally {
@@ -78,7 +100,7 @@ export default function Sessions() {
             </div>
 
             {/* Session Stats Overview */}
-            {sessions.length > 0 && (
+            {todaySessions.length > 0 && (
                 <div style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -110,7 +132,7 @@ export default function Sessions() {
                             color: 'var(--prism-cyan)',
                             marginBottom: '8px'
                         }}>
-                            {sessions.length}
+                            {todaySessions.length}
                         </div>
                         <div className="body-text" style={{
                             fontSize: '16px',
@@ -119,7 +141,7 @@ export default function Sessions() {
                             letterSpacing: '0.5px',
                             fontWeight: '500'
                         }}>
-                            Total Flow Sessions
+                            Flow Sessions Today
                         </div>
                         <div style={{
                             position: 'absolute',
@@ -157,7 +179,7 @@ export default function Sessions() {
                             color: 'var(--hyper-teal)',
                             marginBottom: '8px'
                         }}>
-                            {formatDuration(sessions.reduce((sum, s) => sum + (s.duration_seconds || 0), 0))}
+                            {formatDuration(todaySessions.reduce((sum, s) => sum + (s.duration_seconds || 0), 0))}
                         </div>
                         <div className="body-text" style={{
                             fontSize: '16px',
@@ -166,7 +188,7 @@ export default function Sessions() {
                             letterSpacing: '0.5px',
                             fontWeight: '500'
                         }}>
-                            Total Flow Time
+                            Total Flow Time Today
                         </div>
                         <div style={{
                             position: 'absolute',
@@ -204,7 +226,7 @@ export default function Sessions() {
                             color: 'var(--solar-gold)',
                             marginBottom: '8px'
                         }}>
-                            {formatDuration(Math.max(...sessions.map(s => s.duration_seconds || 0), 0))}
+                            {formatDuration(Math.max(...todaySessions.map(s => s.duration_seconds || 0), 0))}
                         </div>
                         <div className="body-text" style={{
                             fontSize: '16px',
@@ -213,7 +235,7 @@ export default function Sessions() {
                             letterSpacing: '0.5px',
                             fontWeight: '500'
                         }}>
-                            Longest Session
+                            Longest Crystal Session
                         </div>
                         <div style={{
                             position: 'absolute',

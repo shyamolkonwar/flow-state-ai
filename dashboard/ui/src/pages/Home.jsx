@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { supabase, agentAPI } from '../lib/api'
+import { useAuth } from '../lib/AuthContext'
 
 export default function Home() {
+    const { user } = useAuth()
     const [stats, setStats] = useState({
         totalFlowTime: 0,
         sessionCount: 0,
@@ -12,13 +14,15 @@ export default function Home() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        loadTodayStats()
+        if (user) {
+            loadTodayStats()
+        }
         loadAgentStatus()
 
         // Refresh agent status every 5 seconds
         const interval = setInterval(loadAgentStatus, 5000)
         return () => clearInterval(interval)
-    }, [])
+    }, [user])
 
     async function loadAgentStatus() {
         try {
@@ -36,15 +40,24 @@ export default function Home() {
 
             const { data, error } = await supabase
                 .from('sessions')
-                .select('duration_seconds')
+                .select('start_ts, end_ts')
+                .eq('user_id', user.id)
                 .gte('start_ts', today.toISOString())
                 .not('end_ts', 'is', null)
 
             if (error) throw error
 
-            const sessionCount = data.length
-            const totalSeconds = data.reduce((sum, s) => sum + (s.duration_seconds || 0), 0)
-            const longestSeconds = Math.max(...data.map(s => s.duration_seconds || 0), 0)
+            // Calculate durations from timestamps
+            const sessionsWithDuration = data.map(session => {
+                const startTime = new Date(session.start_ts)
+                const endTime = new Date(session.end_ts)
+                const durationSeconds = Math.floor((endTime - startTime) / 1000)
+                return { ...session, duration_seconds: durationSeconds }
+            })
+
+            const sessionCount = sessionsWithDuration.length
+            const totalSeconds = sessionsWithDuration.reduce((sum, s) => sum + (s.duration_seconds || 0), 0)
+            const longestSeconds = Math.max(...sessionsWithDuration.map(s => s.duration_seconds || 0), 0)
             const averageSeconds = sessionCount > 0 ? totalSeconds / sessionCount : 0
 
             setStats({

@@ -13,7 +13,7 @@ ENV/
 node_modules/
 dist/
 build/
-*.log
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -79,3 +79,11 @@ design_doc.txt
 test_signup.py
 test_supabase_basic.py
 frontend_design.txt
+test.txt
+new_features.txt
+# Configuration files with secrets
+agent/config.json
+dashboard/ui/.env
+FlowFacilitator/FlowFacilitator/FlowFacilitator/SupabaseConfig.plist
+chrome-extension/config.js
+test_integration.py

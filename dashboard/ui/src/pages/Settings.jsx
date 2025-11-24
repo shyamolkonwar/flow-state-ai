@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/api'
+import { useAuth } from '../lib/AuthContext'
 
 export default function Settings() {
+    const { user } = useAuth()
     const [flowConfig, setFlowConfig] = useState(null)
     const [blocklist, setBlocklist] = useState([])
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
 
     useEffect(() => {
-        loadSettings()
-    }, [])
+        if (user) {
+            loadSettings()
+        }
+    }, [user])
 
     async function loadSettings() {
         try {
@@ -42,18 +46,23 @@ export default function Settings() {
     }
 
     async function saveSettings() {
+        if (!user) {
+            alert('You must be logged in to save settings')
+            return
+        }
+
         setSaving(true)
         try {
             // Save flow config
             await supabase.rpc('upsert_setting', {
-                p_user_id: 'local_user',
+                p_user_id: user.id,
                 p_key: 'flow_detection',
                 p_value: flowConfig
             })
 
             // Save blocklist
             await supabase.rpc('upsert_setting', {
-                p_user_id: 'local_user',
+                p_user_id: user.id,
                 p_key: 'blocklist',
                 p_value: { domains: blocklist }
             })

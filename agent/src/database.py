@@ -45,13 +45,14 @@ class DatabaseClient:
         self.client = None
         self.logger.info("Disconnected from Supabase")
     
-    def start_session(self, start_app: str, meta: Dict = None) -> Optional[str]:
+    def start_session(self, user_id: Optional[str], start_app: str, meta: Dict = None) -> Optional[str]:
         """Start a new flow session"""
         try:
             if not self.connected:
                 self.logger.warning("Not connected to database, buffering...")
                 return None
             
+            # Note: user_id is ignored - the RPC function uses auth.uid() automatically
             result = self.client.rpc('start_session', {
                 'p_start_ts': datetime.now().isoformat(),
                 'p_start_app': start_app,
@@ -59,7 +60,7 @@ class DatabaseClient:
             }).execute()
             
             session_id = result.data
-            self.logger.info(f"Started session: {session_id}")
+            self.logger.info(f"Started session: {session_id} for user: {user_id or 'authenticated user'}")
             return session_id
             
         except Exception as e:
@@ -88,9 +89,10 @@ class DatabaseClient:
         except Exception as e:
             self.logger.error(f"Error ending session: {e}")
     
-    def insert_event(self, session_id: Optional[str], event_type: str, payload: Dict = None):
+    def insert_event(self, user_id: Optional[str], session_id: Optional[str], event_type: str, payload: Dict = None):
         """Insert an event"""
         event_data = {
+            'user_id': user_id,
             'session_id': session_id,
             'ts': datetime.now().isoformat(),
             'type': event_type,
@@ -128,19 +130,19 @@ class DatabaseClient:
             self.logger.error(f"Error getting settings: {e}")
             return None
     
-    def upsert_setting(self, key: str, value: Dict):
+    def upsert_setting(self, user_id: str, key: str, value: Dict):
         """Update or insert a setting"""
         try:
             if not self.connected:
                 return
             
             self.client.rpc('upsert_setting', {
-                'p_user_id': 'local_user',
+                'p_user_id': user_id,
                 'p_key': key,
                 'p_value': value
             }).execute()
             
-            self.logger.info(f"Updated setting: {key}")
+            self.logger.info(f"Updated setting: {key} for user: {user_id}")
             
         except Exception as e:
             self.logger.error(f"Error upserting setting: {e}")

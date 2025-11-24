@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/api'
+import { useAuth } from '../lib/AuthContext'
 
 export default function Gamification() {
+    const { user } = useAuth()
     const [stats, setStats] = useState(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        loadStats()
-    }, [])
+        if (user) {
+            loadStats()
+        }
+    }, [user])
 
     async function loadStats() {
         try {
@@ -15,6 +19,7 @@ export default function Gamification() {
             const { data, error } = await supabase
                 .from('settings')
                 .select('value')
+                .eq('user_id', user.id)
                 .eq('key', 'gamification_stats')
                 .single()
 

@@ -14,20 +14,20 @@ All conditions must be met continuously for the `flow_entry_window` duration:
 
 | Parameter | Threshold | Description |
 |-----------|-----------|-------------|
-| `typing_rate` | ≥ 40 kpm | Keystrokes per minute averaged over last 60s |
+| `typing_rate` | ≥ 10 kpm | Keystrokes per minute averaged over last 60s (lowered for testing) |
 | `app_switches` | ≤ 2 | Number of app switches in last 5 minutes |
 | `max_idle_gap` | ≤ 4s | Longest idle gap in last 5 minutes |
-| `flow_entry_window` | 300s (5 min) | Duration all criteria must hold |
+| `flow_entry_window` | 30s | Duration all criteria must hold (lowered for testing) |
 
 ### Flow Exit Criteria
 If ANY condition persists for `off_delay_seconds`:
 
 | Parameter | Threshold | Description |
 |-----------|-----------|-------------|
-| `typing_rate` | < 30 kpm | Typing rate drops below threshold |
+| `typing_rate` | < 5 kpm | Typing rate drops below threshold (lowered for testing) |
 | `app_switches` | > 2 | More than 2 app switches |
 | `max_idle_gap` | > 6s | Idle gap exceeds threshold |
-| `off_delay_seconds` | 30s | Duration before exiting flow |
+| `off_delay_seconds` | 10s | Duration before exiting flow (lowered for testing) |
 
 ## Configuration Schema
 

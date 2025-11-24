@@ -206,3 +206,24 @@ self.current_goal = int(typical_duration * 1.05)  # Change 1.05 to adjust
 4. Add more achievements
 5. Implement fluid goals logic
 6. Add data export for gamification stats
+
+## License
+
+This software is proprietary and all rights are reserved by Shyamol Konwar. No part of the software may be reproduced, distributed, or transmitted in any form or by any means, including photocopying, recording, or other electronic or mechanical methods, without the prior written permission of Shyamol Konwar.
+
+The software is provided "AS IS", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. In no event shall Shyamol Konwar be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
+
+For licensing inquiries, please contact Shyamol Konwar.
+
+## Contact
+
+Email: shyamol@fusionfocus.in
+Website: https://fusionfocus.in
+
+## Acknowledgments
+
+Built for students and knowledge workers who want to achieve deeper, more sustained focus in an increasingly distracting digital world.
+
+---
+
+**No contributions needed. This software is fully licensed and proprietary.**

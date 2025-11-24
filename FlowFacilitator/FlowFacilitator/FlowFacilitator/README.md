@@ -349,26 +349,10 @@ Check `Info.plist` has `LSUIElement` set to `true`.
 
 ## 📄 License
 
-MIT License - See LICENSE file for details
+Copyright (c) 2025 Shyamol Konwar. All rights reserved.
 
----
+This software and associated documentation files (the "Software") are proprietary and confidential. No part of the Software may be reproduced, distributed, or transmitted in any form or by any means, including photocopying, recording, or other electronic or mechanical methods, without the prior written permission of Shyamol Konwar.
 
-## 🤝 Contributing
+The Software is provided "AS IS", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. In no event shall Shyamol Konwar be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the Software or the use or other dealings in the Software.
 
-1. Fork the repository
-2. Create feature branch
-3. Commit changes
-4. Push to branch
-5. Create Pull Request
-
----
-
-## 📧 Support
-
-For issues and questions:
-- GitHub Issues
-- Email: support@flowfacilitator.com
-
----
-
-**Built with ❤️ using Swift and SwiftUI**
+For licensing inquiries, please contact Shyamol Konwar.
